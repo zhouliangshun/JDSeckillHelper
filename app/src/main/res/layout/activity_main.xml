@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".activities.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+            <TextView
+                android:layout_alignParentLeft="true"
+                android:gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:text="开启秒杀"
+                android:layout_height="match_parent" />
+
+            <Switch
+                android:id="@+id/ss_switch"
+                android:layout_width="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_alignParentRight="true"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:background="#9c9c9c"
+            android:layout_height="1px"/>
+
+        <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <TextView
+            android:id="@+id/tv_ss_time_label"
+            android:layout_alignParentLeft="true"
+            android:gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:text="秒杀时间"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/tv_ss_time"
+            android:text="12:00"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_alignParentRight="true"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:background="#9c9c9c"
+            android:layout_height="1px"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+            <TextView
+                android:id="@+id/tv_ss_price_label"
+                android:layout_alignParentLeft="true"
+                android:gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:text="秒杀价格"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/tv_ss_price"
+                android:text="618"
+                android:layout_width="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_alignParentRight="true"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:background="#9c9c9c"
+            android:layout_height="1px"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tv_ss_goods"
+                android:layout_alignParentLeft="true"
+                android:gravity="center_vertical"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:text="秒杀物品"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_marginLeft="10dp"
+                android:id="@+id/tv_ss_goods_name"
+                android:layout_width="wrap_content"
+                android:gravity="center_vertical"
+                android:minHeight="40dp"
+                android:text="坚果（JmGO）P2 智能高清 家用投影机（3D投影电视 微型投影仪 智能影院）"
+                android:layout_alignParentRight="true"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/tv_ss_goods" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:background="#9c9c9c"
+            android:layout_height="1px"/>
+
+    </LinearLayout>
+
+</RelativeLayout>
