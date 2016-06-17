@@ -15,8 +15,6 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import com.kylins.jdseckillhelper.R;
 import com.kylins.jdseckillhelper.activities.MainActivity;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
 
 public class JDSeckillService extends AccessibilityService {
@@ -76,10 +74,11 @@ public class JDSeckillService extends AccessibilityService {
 
     private void startJDMSActivity(){
         //打开京东
-        isClickTime = false;
-        isChilckGoods = false;
-        isChilckPrice = false;
-        Intent intent = Intent.makeRestartActivityTask(new ComponentName("com.jingdong.app.mall","com.jingdong.app.mall.miaosha.MiaoShaActivity"));
+        isCheckTime = false;
+        isCheckGoods = false;
+        isCheckPrice = false;
+        isGoChat = false;
+        Intent intent = Intent.makeRestartActivityTask(new ComponentName("com.jingdong.app.mall","com.jingdong.app.mall.MainActivity"));
         startActivity(intent);
         isStart = true;
     }
@@ -101,77 +100,139 @@ public class JDSeckillService extends AccessibilityService {
         super.onDestroy();
     }
 
-    private boolean isClickTime = false;
-    private boolean isChilckGoods = false;
-    private boolean isChilckPrice = false;
+    private boolean isCheckTime = false;
+    private boolean isCheckGoods = false;
+    private boolean isCheckPrice = false;
+
+    private boolean isGoChat = false;
 
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
+        if(event.getSource()==null)
+            return;
         if(isStart){
-            if(!isClickTime){
-                List<AccessibilityNodeInfo> accessibilityNodeInfos =  event.getSource().findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/dky");
-                for(AccessibilityNodeInfo accessibilityNodeInfo : accessibilityNodeInfos) {
-                    CharSequence charSequence = accessibilityNodeInfo.getText();
-                    if(charSequence!=null&&charSequence.toString().equals(seckillTime)){
-                        //检查是否点击
-                        accessibilityNodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                        isClickTime = true;
-                        return;
+
+            if(!isGoChat){
+                List<AccessibilityNodeInfo> accessibilityNodeInfos =  event.getSource().findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/t4");
+                if (!accessibilityNodeInfos.isEmpty()){
+                    if(accessibilityNodeInfos.get(0).getChildCount()==5){
+                        accessibilityNodeInfos.get(0).getChild(3).performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                        isGoChat = true;
                     }
+
                 }
+                return;
             }
 
-            if(!isChilckGoods){
-                List<AccessibilityNodeInfo> accessibilityNodeInfos =  event.getSource().findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/su");
-                for(AccessibilityNodeInfo accessibilityNodeInfo : accessibilityNodeInfos) {
-                    CharSequence charSequence = accessibilityNodeInfo.getText();
-                    if(charSequence!=null&&charSequence.toString().equals(seckillPrice)){
-                        //检查是否点击
-                        accessibilityNodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                        isChilckGoods = true;
-                        return;
-                    }
-                }
-            }
 
-            if(!isChilckPrice){
-                List<AccessibilityNodeInfo> accessibilityNodeInfos =  event.getSource().findAccessibilityNodeInfosByViewId("com.jd.lib.productdetail:id/detail_price");
-                List<AccessibilityNodeInfo> carAssss =  event.getSource().findAccessibilityNodeInfosByViewId("com.jd.lib.productdetail:id/add_2_car");
-                if(!carAssss.isEmpty()){
-                    for(AccessibilityNodeInfo accessibilityNodeInfo : accessibilityNodeInfos) {
-                        CharSequence charSequence = accessibilityNodeInfo.getText();
+            //检查名字
+            List<AccessibilityNodeInfo> accessibilityNodeInfos =  event.getSource().findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bp7");
+            for(AccessibilityNodeInfo accessibilityNodeInfo : accessibilityNodeInfos) {
+                CharSequence charSequence = accessibilityNodeInfo.getText();
+                if (charSequence != null && charSequence.toString().trim().equals(goodsName.trim())) {
+                    //检查价格
+                    List<AccessibilityNodeInfo> prices =  accessibilityNodeInfo.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bp9");
+                    if(!prices.isEmpty()){
+                            charSequence = prices.get(0).getText();
                         if(charSequence!=null){
                             String str = charSequence.toString();
                             float pricNow = Float.parseFloat(str.replaceAll("[^\\.0123456789]",""));
                             float wantPrice = Float.parseFloat(seckillPrice.replaceAll("[^\\.0123456789]",""));
                             if(wantPrice<=pricNow){
                                 //检查是否点击
-                                carAssss.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                carAssss = event.getSource().findAccessibilityNodeInfosByViewId("com.jd.lib.productdetail:id/pd_txt_shopcar");
-                                if(!carAssss.isEmpty()){
-                                    carAssss.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
+
+                                List<AccessibilityNodeInfo> buy =  event.getSource().findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bok");
+                                if(!buy.isEmpty()) {
+                                    buy.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                    isCheckPrice = true;
+                                    return;
                                 }
-                                isChilckPrice = true;
-                                return;
+
                             }
                         }
                     }
+                    }
+                    return;
+                }
+
+
+                if(isCheckPrice){
+                   accessibilityNodeInfos =  event.getSource().findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/avz");
+                   if(!accessibilityNodeInfos.isEmpty()){
+                       accessibilityNodeInfos.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);//下单
+                   }
+                    return;
+                }
+
+                //刷新
+                accessibilityNodeInfos =  event.getSource().findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/f69");
+                if (!accessibilityNodeInfos.isEmpty()){
+                    accessibilityNodeInfos.get(0).performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD);
                 }
             }
 
-            if(isChilckPrice){
-                List<AccessibilityNodeInfo> accessibilityNodeInfos =  event.getSource().findAccessibilityNodeInfosByViewId("   com.jingdong.app.mall:id/bok");
-                if(!accessibilityNodeInfos.isEmpty()){
-                    accessibilityNodeInfos.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    stop();
-                }
-            }
+//
+//
+//            if(!isCheckTime){
+//                List<AccessibilityNodeInfo> accessibilityNodeInfos =  event.getSource().findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/dky");
+//                for(AccessibilityNodeInfo accessibilityNodeInfo : accessibilityNodeInfos) {
+//                    CharSequence charSequence = accessibilityNodeInfo.getText();
+//                    if(charSequence!=null&&charSequence.toString().equals(seckillTime)){
+//                        //检查是否点击
+//                        accessibilityNodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+//                        isCheckTime = true;
+//                        return;
+//                    }
+//                }
+//            }
+//
+//            if(!isCheckGoods){
+//                List<AccessibilityNodeInfo> accessibilityNodeInfos =  event.getSource().findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/su");
+//                for(AccessibilityNodeInfo accessibilityNodeInfo : accessibilityNodeInfos) {
+//                    CharSequence charSequence = accessibilityNodeInfo.getText();
+//                    if(charSequence!=null&&charSequence.toString().equals(seckillPrice)){
+//                        //检查是否点击
+//                        accessibilityNodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+//                        isCheckGoods = true;
+//                        return;
+//                    }
+//                }
+//            }
+//
+//            if(!isCheckPrice){
+//                List<AccessibilityNodeInfo> accessibilityNodeInfos =  event.getSource().findAccessibilityNodeInfosByViewId("com.jd.lib.productdetail:id/detail_price");
+//                List<AccessibilityNodeInfo> carAssss =  event.getSource().findAccessibilityNodeInfosByViewId("com.jd.lib.productdetail:id/add_2_car");
+//                if(!carAssss.isEmpty()){
+//                    for(AccessibilityNodeInfo accessibilityNodeInfo : accessibilityNodeInfos) {
+//                        CharSequence charSequence = accessibilityNodeInfo.getText();
+//                        if(charSequence!=null){
+//                            String str = charSequence.toString();
+//                            float pricNow = Float.parseFloat(str.replaceAll("[^\\.0123456789]",""));
+//                            float wantPrice = Float.parseFloat(seckillPrice.replaceAll("[^\\.0123456789]",""));
+//                            if(wantPrice<=pricNow){
+//                                //检查是否点击
+//                                carAssss.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
+//                                carAssss = event.getSource().findAccessibilityNodeInfosByViewId("com.jd.lib.productdetail:id/pd_txt_shopcar");
+//                                if(!carAssss.isEmpty()){
+//                                    carAssss.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
+//                                }
+//                                isCheckPrice = true;
+//                                return;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//
+//            if(isCheckPrice){
+//                List<AccessibilityNodeInfo> accessibilityNodeInfos =  event.getSource().findAccessibilityNodeInfosByViewId("   com.jingdong.app.mall:id/bok");
+//                if(!accessibilityNodeInfos.isEmpty()){
+//                    accessibilityNodeInfos.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
+//                    stop();
+//                }
+//            }
 
-
-            startJDMSActivity();
-
-        }
     }
 
     /**
